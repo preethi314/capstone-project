@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  app:
+    image: sriganesh001/prod:react-app-1
+    restart: always
+    ports:
+      - "8080:80"  # map port 8080 on the host to port 80 in the container
+    tty: true
+    stdin_open: true
+
