@@ -1,0 +1,40 @@
+scp -o StrictHostKeyChecking=no -i $key /path/to/local/dir ubuntu@15.206.169.59:/home/ubuntu/
+ssh -o StrictHostKeyChecking=no -i $key ubuntu@15.206.169.59 << EOF
+pwd
+ls
+sed -i -e "s+REPO_NAME+Capstone-Project+g" /home/ubuntu/docker-compose.yml
+sed -i -e "s+TAG_NAME+react-app-1+g" /home/ubuntu/docker-compose.yml
+cat /home/ubuntu/docker-compose.yml
+echo "#########################################"
+if [ $BRANCH_NAME == "dev" ]
+then
+  cd /home/ubuntu
+  docker login -u sriganesh001 -p dckr_pat_EJUIFDR8xPKQ4oagS9-TGCV213Q
+  if [ $? -eq 0 ]
+  then
+    docker build -t Capstone-Project:react-app-1 .
+    docker tag Capstone-Project:react-app-1 sriganesh001/dev:react-app-1
+    docker push sriganesh001/dev:react-app-1
+  else
+    echo "Docker login failed"
+  fi
+elif [ $BRANCH_NAME == "main" ]
+then
+  cd /home/ubuntu
+  docker login -u sriganesh001 -p dckr_pat_EJUIFDR8xPKQ4oagS9-TGCV213Q
+  if [ $? -eq 0 ]
+  then
+    docker build -t Capstone-Project:react-app-1 .
+    docker tag Capstone-Project:react-app-1 sriganesh001/prod:react-app-1
+    docker push sriganesh001/prod:react-app-1
+  else
+    echo "Docker login failed"
+  fi
+else
+  echo "some other branch"
+fi
+echo "#########################################"
+cd /home/ubuntu
+chmod +x deploy.sh
+./deploy.sh
+
